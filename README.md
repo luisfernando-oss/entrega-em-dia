@@ -4,6 +4,13 @@ Ferramenta local para centralizar perfis de ICP e acompanhar entregas recorrente
 
 Interface alinhada à identidade visual da EchoHub, com paleta azul-neon, turquesa e preto.
 
+## Acesso online
+
+- Aplicação: https://luisfernando-oss.github.io/entrega-em-dia/
+- Código-fonte: https://github.com/luisfernando-oss/entrega-em-dia
+
+Nesta versão, os dados ficam salvos no navegador de cada usuário. A publicação disponibiliza a ferramenta para toda a equipe, mas ainda não sincroniza clientes e entregas entre computadores diferentes.
+
 ## Como abrir
 
 1. Dê dois cliques em `iniciar.bat`.
