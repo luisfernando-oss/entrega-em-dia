@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">EchoHub</title>
+  <rect width="64" height="64" rx="15" fill="#202020"/>
+  <g fill="none" stroke="#53F0DF" stroke-width="5.2" stroke-linecap="butt">
+    <path d="M31.5 55.5A24 24 0 0 1 31.5 8.5"/>
+    <path d="M31.5 47.5A16 16 0 0 1 31.5 16.5"/>
+  </g>
+  <path d="M31.5 22a10 10 0 1 0 0 20V32h10A10 10 0 0 0 31.5 22Z" fill="#53F0DF"/>
+  <path d="M36 37h13a4 4 0 0 1 4 4H36v-4Zm0 10h12a4 4 0 0 1 4 4H36v-4Z" fill="#53F0DF"/>
+</svg>

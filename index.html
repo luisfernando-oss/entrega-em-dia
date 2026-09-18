@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8fafc" />
+    <title>Entrega em Dia</title>
+    <link rel="icon" href="assets/echohub-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <img class="brand-mark" src="assets/echohub-mark.svg" alt="" />
+          <div>
+            <strong>Entrega em Dia</strong>
+            <span>EchoHub · Operação & ICP</span>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Navegação principal">
+          <button class="nav-item active" data-view="overview">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-16v4h6V4h-6Z"/></svg></span><span>Visão geral</span>
+          </button>
+          <button class="nav-item" data-view="calendar">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h2v2h6V2h2v2h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2V2Zm12 8H5v10h14V10ZM5 8h14V6H5v2Z"/></svg></span><span>Agenda</span>
+            <span class="nav-badge" id="navPendingCount">0</span>
+          </button>
+          <button class="nav-item" data-view="clients">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8 0c-2.67 0-8 1.34-8 4v3h13v-3c0-2.66-2.33-4-5-4ZM8 15c-3.11 0-6 1.56-6 4v1h4v-3c0-.72.2-1.36.57-1.93C7.04 15.02 7.52 15 8 15Z"/></svg></span><span>Clientes</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-callout">
+          <span class="eyebrow">Próxima entrega</span>
+          <strong id="sidebarNextTitle">Tudo em dia</strong>
+          <span id="sidebarNextMeta">Nenhuma pendência próxima</span>
+          <button class="text-button" data-view-link="calendar">Ver agenda <span>→</span></button>
+        </div>
+
+        <div class="sidebar-footer">
+          <button class="utility-button" id="exportButton" title="Exportar todos os dados">⇩ <span>Exportar backup</span></button>
+          <label class="utility-button" for="importInput" title="Importar um backup">
+            ⇧ <span>Importar backup</span>
+          </label>
+          <input type="file" id="importInput" accept="application/json" hidden />
+          <span>Dados salvos neste navegador</span>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+          <div>
+            <span class="today-label" id="todayLabel"></span>
+            <h1 id="pageTitle">Visão geral</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="quickSearchButton" title="Buscar cliente" aria-label="Buscar cliente"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg></button>
+            <button class="primary-button" id="newClientButton"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Novo cliente</button>
+          </div>
+        </header>
+
+        <section class="view active" id="overviewView">
+          <div class="hero-row">
+            <div>
+              <span class="eyebrow accent">PAINEL OPERACIONAL</span>
+              <h2>O que precisa da sua atenção?</h2>
+              <p>Acompanhe entregas, reuniões e follow-ups sem depender de marcações manuais.</p>
+            </div>
+            <div class="month-switcher compact">
+              <button id="overviewPrevMonth" aria-label="Mês anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+              <strong id="overviewMonthLabel"></strong>
+              <button id="overviewNextMonth" aria-label="Próximo mês"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card dark">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M10 5h9v9"/></svg></div>
+              <span>Entregas no mês</span>
+              <strong id="statDeliveries">0</strong>
+              <small id="statDeliveriesMeta">Nenhuma programada</small>
+            </article>
+            <article class="stat-card coral">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg></div>
+              <span>Pendências</span>
+              <strong id="statPending">0</strong>
+              <small id="statPendingMeta">Tudo em ordem</small>
+            </article>
+            <article class="stat-card cream">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 12 3 3 7-7"/><circle cx="12" cy="12" r="9"/></svg></div>
+              <span>Concluídas</span>
+              <strong id="statCompleted">0</strong>
+              <small id="statCompletedMeta">0% do mês</small>
+            </article>
+            <article class="stat-card mint">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 19v-1.5c0-2-1.8-3.5-4-3.5s-4 1.5-4 3.5V19M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><circle cx="12" cy="12" r="9"/></svg></div>
+              <span>Clientes ativos</span>
+              <strong id="statClients">0</strong>
+              <small id="statClientsMeta">Nenhum ICP cadastrado</small>
+            </article>
+          </div>
+
+          <div class="overview-grid">
+            <article class="panel agenda-panel">
+              <div class="panel-header">
+                <div>
+                  <span class="eyebrow">PRÓXIMOS COMPROMISSOS</span>
+                  <h3>Na sua fila</h3>
+                </div>
+                <button class="text-button" data-view-link="calendar">Abrir agenda <span>→</span></button>
+              </div>
+              <div class="event-list" id="upcomingList"></div>
+            </article>
+
+            <article class="panel attention-panel">
+              <div class="panel-header">
+                <div>
+                  <span class="eyebrow">RADAR</span>
+                  <h3>Clientes em atenção</h3>
+                </div>
+              </div>
+              <div id="attentionList" class="attention-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="calendarView">
+          <div class="calendar-toolbar">
+            <div class="month-switcher">
+              <button id="prevMonth" aria-label="Mês anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+              <strong id="calendarMonthLabel"></strong>
+              <button id="nextMonth" aria-label="Próximo mês"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+              <button class="ghost-button" id="todayButton">Hoje</button>
+            </div>
+            <div class="filter-pills" id="calendarFilters">
+              <button class="filter-pill active" data-filter="all">Todos</button>
+              <button class="filter-pill" data-filter="research"><i class="dot research"></i> Pesquisa</button>
+              <button class="filter-pill" data-filter="delivery"><i class="dot delivery"></i> Listagens</button>
+              <button class="filter-pill" data-filter="feedback"><i class="dot feedback"></i> Feedbacks</button>
+              <button class="filter-pill" data-filter="followup"><i class="dot followup"></i> Follow-ups</button>
+            </div>
+          </div>
+
+          <div class="calendar-layout">
+            <article class="panel calendar-panel">
+              <div class="calendar-weekdays">
+                <span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SÁB</span><span>DOM</span>
+              </div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+            </article>
+            <aside class="day-drawer panel" id="dayDrawer">
+              <div class="day-drawer-header">
+                <span class="eyebrow">DIA SELECIONADO</span>
+                <h3 id="selectedDayTitle"></h3>
+              </div>
+              <div id="selectedDayEvents" class="day-events"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="clientsView">
+          <div class="clients-toolbar">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+              <input id="clientSearch" type="search" placeholder="Buscar por cliente, segmento ou região..." />
+            </div>
+            <div class="client-filters">
+              <button class="filter-pill active" data-client-filter="active">Ativos</button>
+              <button class="filter-pill" data-client-filter="all">Todos</button>
+            </div>
+          </div>
+          <div class="clients-header">
+            <div>
+              <span class="eyebrow">CARTEIRA</span>
+              <h2>Clientes, contratos & ICPs</h2>
+              <p>Abra a ficha de cada conta e consulte contrato, escopo, ICP e rotina em um só lugar.</p>
+            </div>
+            <button class="secondary-button" id="newClientButtonSecondary"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Adicionar cliente</button>
+          </div>
+          <div class="client-grid" id="clientGrid"></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="modal client-modal" id="clientModal">
+      <form method="dialog" class="modal-shell" id="clientForm">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">CADASTRO OPERACIONAL</span>
+            <h2 id="clientModalTitle">Novo cliente</h2>
+            <p>Defina o ICP e deixe as próximas rotinas se organizarem sozinhas.</p>
+          </div>
+          <button type="button" class="close-button" data-close-modal aria-label="Fechar">×</button>
+        </div>
+
+        <div class="form-progress" aria-label="Progresso do cadastro">
+          <button type="button" class="form-step active" data-step-target="1"><span>1</span> Cliente</button>
+          <i></i>
+          <button type="button" class="form-step" data-step-target="2"><span>2</span> ICP</button>
+          <i></i>
+          <button type="button" class="form-step" data-step-target="3"><span>3</span> Rotina</button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" id="clientId" />
+
+          <section class="form-page active" data-step="1">
+            <div class="form-section-title">
+              <div class="section-number">01</div>
+              <div><h3>Informações do cliente</h3><p>O básico para identificar e acompanhar a conta.</p></div>
+            </div>
+            <div class="form-grid two">
+              <label class="field"><span>Nome da empresa *</span><input id="companyName" required placeholder="Ex.: Aurora Tecnologia" /></label>
+              <label class="field"><span>Responsável na empresa</span><input id="contactName" placeholder="Nome do contato principal" /></label>
+              <label class="field"><span>Responsável interno</span><input id="ownerName" placeholder="Quem cuida desta conta?" /></label>
+              <label class="field featured-field"><span>Data da reunião de kickoff *</span><input id="startDate" type="date" required /><small>Esta data inicia automaticamente toda a cadência operacional.</small></label>
+              <label class="field"><span>Status</span><select id="clientStatus"><option value="active">Ativo</option><option value="paused">Pausado</option><option value="closed">Encerrado</option></select></label>
+              <label class="field"><span>Canal / pasta do cliente</span><input id="clientLink" type="url" placeholder="https://..." /></label>
+            </div>
+            <label class="field"><span>Observações da conta</span><textarea id="accountNotes" rows="4" placeholder="Contexto importante, acordos comerciais, preferências do cliente..."></textarea></label>
+
+            <div class="routine-divider contract-divider"><span>CONTRATO & ESCOPO COMERCIAL</span></div>
+            <div class="contract-form-card">
+              <div class="contract-form-intro">
+                <span class="contract-form-icon" aria-hidden="true">⌁</span>
+                <div><h4>Informações do contrato</h4><p>Centralize o que foi contratado e acompanhe a vigência sem depender do Notion.</p></div>
+              </div>
+              <div class="form-grid two">
+                <label class="field"><span>Quantidade de leads contratada</span><input id="contractLeadVolume" type="number" min="1" step="1" placeholder="Ex.: 500" /></label>
+                <label class="field"><span>Referência do volume</span><select id="contractLeadPeriod"><option value="monthly">Por mês</option><option value="delivery">Por entrega</option><option value="total">Total do contrato</option></select></label>
+                <label class="field"><span>Início do trabalho</span><input id="contractStartDate" type="date" /></label>
+                <label class="field"><span>Término do contrato</span><input id="contractEndDate" type="date" /><small>Deixe em branco quando não houver prazo definido.</small></label>
+                <label class="field full-field"><span>Serviço / plano contratado</span><input id="contractService" placeholder="Ex.: Prospecção recorrente · Plano Growth" /></label>
+              </div>
+              <label class="field"><span>Escopo e observações contratuais</span><textarea id="contractNotes" rows="3" placeholder="Condições combinadas, particularidades do pacote, limites e informações importantes..."></textarea></label>
+
+              <div class="contract-upload" id="contractUploadArea">
+                <input id="contractFile" type="file" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" hidden />
+                <div class="contract-upload-copy">
+                  <span class="contract-upload-icon" aria-hidden="true">⇧</span>
+                  <div><strong>Anexar contrato</strong><span>PDF, DOC, DOCX, PNG ou JPG · até 10 MB</span></div>
+                </div>
+                <label class="secondary-button compact-button" for="contractFile">Escolher arquivo</label>
+              </div>
+              <div class="contract-file-preview hidden" id="contractFilePreview">
+                <span class="contract-file-type" id="contractFileType">PDF</span>
+                <div><strong id="contractFileName"></strong><span id="contractFileMeta"></span></div>
+                <button type="button" class="icon-text-button" id="removeContractFile">Remover</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="form-page" data-step="2">
+            <div class="form-section-title">
+              <div class="section-number">02</div>
+              <div><h3>Perfil do cliente ideal</h3><p>Critérios usados sempre que uma nova listagem for produzida.</p></div>
+            </div>
+            <div class="form-tip"><span>✦</span><div><strong>Deixe o ICP fácil de consultar</strong><p>Use critérios objetivos e termos que a equipe reconheça rapidamente durante a produção das listas.</p></div></div>
+            <div class="icp-archive-card" id="icpUploadArea">
+              <div class="icp-archive-intro">
+                <span class="migration-badge">MIGRAÇÃO RÁPIDA</span>
+                <div><strong>Já existe um ICP em outro sistema?</strong><p>Anexe o resumo em PDF — recomendamos uma página. Ele ficará arquivado na ficha deste cliente.</p></div>
+              </div>
+              <div class="icp-upload-row">
+                <input type="file" id="icpFile" accept=".pdf,application/pdf" hidden />
+                <label class="secondary-button compact-button" for="icpFile">＋ Anexar PDF do ICP</label>
+                <span>Até 10 MB</span>
+              </div>
+              <div class="contract-file-preview hidden" id="icpFilePreview">
+                <span class="contract-file-type icp-file-type" id="icpFileType">PDF</span>
+                <div><strong id="icpFileName"></strong><span id="icpFileMeta"></span></div>
+                <button type="button" class="icon-text-button" id="removeIcpFile">Remover</button>
+              </div>
+            </div>
+
+            <div class="structured-divider"><span>ou mantenha o ICP estruturado</span></div>
+            <label class="field"><span>Título da segmentação</span><input id="icpTitle" placeholder="Ex.: SaaS B2B no Sudeste" /><small>Para clientes antigos, o PDF anexado pode substituir o preenchimento detalhado abaixo.</small></label>
+
+            <div class="form-grid two">
+              <label class="field"><span>Clientes similares</span><input id="similarClients" placeholder="RD Station, HubSpot, Pipedrive" /><small>Separe os itens por vírgula.</small></label>
+              <label class="field"><span>Segmentos de mercado</span><input id="marketSegments" placeholder="Software, Tecnologia, Serviços B2B" /><small>Separe os itens por vírgula.</small></label>
+              <label class="field"><span>CNAEs</span><input id="cnaes" placeholder="6201-5/01, 6204-0/00" /><small>Separe os itens por vírgula.</small></label>
+              <div class="field"><span>Regiões</span><div id="regions" class="choice-grid" role="group" aria-label="Regiões atendidas">
+                <label class="choice-chip"><input type="checkbox" value="Norte" /><span>Norte</span></label>
+                <label class="choice-chip"><input type="checkbox" value="Nordeste" /><span>Nordeste</span></label>
+                <label class="choice-chip"><input type="checkbox" value="Centro-Oeste" /><span>Centro-Oeste</span></label>
+                <label class="choice-chip"><input type="checkbox" value="Sudeste" /><span>Sudeste</span></label>
+                <label class="choice-chip"><input type="checkbox" value="Sul" /><span>Sul</span></label>
+              </div><small>Selecione uma ou mais regiões.</small></div>
+              <label class="field"><span>Estados (UF)</span><input id="states" placeholder="SP, MG, RJ" /><small>Separe os itens por vírgula.</small></label>
+              <label class="field"><span>Municípios</span><input id="cities" placeholder="São Paulo, Campinas, Belo Horizonte" /><small>Separe os itens por vírgula.</small></label>
+            </div>
+
+            <div class="range-section">
+              <h4>Porte da empresa</h4>
+              <div class="form-grid three">
+                <label class="field"><span>Funcionários — mínimo</span><select id="employeesMin"></select></label>
+                <label class="field"><span>Funcionários — máximo</span><select id="employeesMax"></select></label>
+                <label class="field"><span>Faixa de faturamento</span><select id="revenueRange"></select></label>
+                <label class="field"><span>Filiais — mínimo</span><input id="branchesMin" type="number" min="1" value="1" /></label>
+                <label class="field"><span>Filiais — máximo</span><input id="branchesMax" type="number" min="1" value="200" /></label>
+              </div>
+            </div>
+
+            <label class="field"><span>Características específicas da empresa</span><textarea id="companyTraits" rows="4" placeholder="Tecnologias usadas, modelo de negócio, momento da empresa, sinais de intenção..."></textarea></label>
+
+            <div class="range-section persona-section">
+              <h4>Informações da persona</h4>
+              <div class="form-grid two">
+                <label class="field"><span>Níveis hierárquicos</span><input id="personaLevels" placeholder="Gerente, Diretor, Sócio, CEO" /></label>
+                <label class="field"><span>Departamentos</span><input id="personaDepartments" placeholder="Comercial, Marketing, TI" /></label>
+              </div>
+              <label class="field"><span>Características da persona</span><textarea id="personaTraits" rows="4" placeholder="Dores, motivações, responsabilidades e comportamento de compra..."></textarea></label>
+            </div>
+
+            <div class="icp-revision-context hidden" id="icpRevisionContext">
+              <div class="revision-context-icon">↻</div>
+              <div class="revision-context-copy">
+                <strong>Contexto desta revisão</strong>
+                <p>Se o cliente pediu uma mudança, registre o motivo. As diferenças serão salvas automaticamente na linha do tempo.</p>
+                <label class="field"><span>Motivo ou origem da alteração</span><textarea id="icpChangeReason" rows="3" placeholder="Ex.: Ajuste solicitado na reunião de feedback do segundo mês."></textarea></label>
+              </div>
+            </div>
+          </section>
+
+          <section class="form-page" data-step="3">
+            <div class="form-section-title">
+              <div class="section-number">03</div>
+              <div><h3>Rotina de entregas</h3><p>Do kickoff ao primeiro feedback, sem nenhuma marcação manual.</p></div>
+            </div>
+
+            <div class="cadence-hero">
+              <div class="cadence-hero-top">
+                <div><span class="eyebrow">CADÊNCIA PADRÃO</span><h4>Primeiro ciclo do cliente</h4><p>As datas abaixo partem do kickoff e se adaptam automaticamente.</p></div>
+                <label class="switch labeled-switch"><span class="switch-label">Ativa</span><input id="onboardingEnabled" type="checkbox" checked /><span></span></label>
+              </div>
+              <div class="cadence-timeline" id="cadenceTimeline">
+                <div class="cadence-node kickoff-node"><i>01</i><div><small>Kickoff</small><strong id="cadenceKickoffDate">—</strong><span>Formulário ICP</span></div></div>
+                <div class="cadence-connector"><b>+2</b><span>dias úteis</span></div>
+                <div class="cadence-node research-node"><i>02</i><div><small>Pesquisa</small><strong id="cadenceResearchDate">—</strong><span>Pesquisa de mercado</span></div></div>
+                <div class="cadence-connector"><b>+5</b><span>dias úteis</span></div>
+                <div class="cadence-node list-node"><i>03</i><div><small>1ª entrega</small><strong id="cadenceFirstDeliveryDate">—</strong><span>Primeira listagem</span></div></div>
+                <div class="cadence-connector"><b>+15</b><span>dias corridos</span></div>
+                <div class="cadence-node feedback-node"><i>04</i><div><small>Feedback</small><strong id="cadenceFeedbackDate">—</strong><span>Reunião com cliente</span></div></div>
+              </div>
+              <div class="cadence-note"><span>ℹ</span> Dias úteis consideram segunda a sexta. Depois da primeira entrega, os follow-ups e as entregas mensais entram na agenda.</div>
+            </div>
+
+            <div class="routine-divider"><span>ROTINA APÓS O PRIMEIRO CICLO</span></div>
+
+            <div class="schedule-card delivery-rule">
+              <div class="schedule-card-title"><span class="event-symbol delivery">↗</span><div><h4>Próximas listagens</h4><p>Recorrência mensal após a primeira entrega</p></div><label class="switch"><input id="deliveryEnabled" type="checkbox" checked /><span></span></label></div>
+              <div class="form-grid two schedule-fields">
+                <label class="field"><span>Dia do mês</span><input id="deliveryDay" type="number" min="1" max="31" value="10" /></label>
+                <label class="field"><span>Quantidade prevista de leads</span><input id="leadsQuantity" type="number" min="1" placeholder="Ex.: 500" /></label>
+              </div>
+            </div>
+
+            <div class="schedule-card feedback-rule">
+              <div class="schedule-card-title"><span class="event-symbol feedback">◌</span><div><h4>Próximos feedbacks</h4><p>Recorrência mensal após o primeiro feedback</p></div><label class="switch"><input id="feedbackEnabled" type="checkbox" checked /><span></span></label></div>
+              <div class="form-grid two schedule-fields">
+                <label class="field"><span>Dia do mês</span><input id="feedbackDay" type="number" min="1" max="31" value="20" /></label>
+                <label class="field"><span>Horário</span><input id="feedbackTime" type="time" value="10:00" /></label>
+              </div>
+            </div>
+
+            <div class="schedule-card followup-rule">
+              <div class="schedule-card-title"><span class="event-symbol followup">→</span><div><h4>Follow-up com o cliente</h4><p>Começa depois da primeira listagem</p></div><label class="switch"><input id="followupEnabled" type="checkbox" checked /><span></span></label></div>
+              <div class="form-grid three schedule-fields">
+                <label class="field"><span>Frequência</span><select id="followupFrequency"><option value="weekly" selected>Semanal</option><option value="biweekly">Quinzenal</option><option value="monthly">Mensal</option></select></label>
+                <label class="field"><span>Dia da semana</span><select id="followupWeekday"><option value="1">Segunda</option><option value="2">Terça</option><option value="3" selected>Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option></select></label>
+                <label class="field"><span>Horário</span><input id="followupTime" type="time" value="14:00" /></label>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="danger-link hidden" id="deleteClientButton">Excluir cliente</button>
+          <div class="footer-spacer"></div>
+          <button type="button" class="ghost-button" data-close-modal>Cancelar</button>
+          <button type="button" class="secondary-button hidden" id="previousStepButton">← Voltar</button>
+          <button type="button" class="primary-button" id="nextStepButton">Continuar →</button>
+          <button type="submit" class="primary-button hidden" id="saveClientButton">Salvar cliente</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal detail-modal" id="clientDetailModal">
+      <div class="modal-shell detail-shell">
+        <div class="modal-header">
+          <div><span class="eyebrow">FICHA DO CLIENTE</span><h2 id="detailClientName"></h2><p id="detailClientMeta"></p></div>
+          <button type="button" class="close-button" data-close-detail aria-label="Fechar">×</button>
+        </div>
+        <div class="modal-body" id="clientDetailBody"></div>
+        <div class="modal-footer">
+          <button class="ghost-button" data-close-detail>Fechar</button>
+          <button class="primary-button" id="editFromDetail">Editar cliente</button>
+        </div>
+      </div>
+    </dialog>
+
+    <div class="search-overlay" id="searchOverlay" hidden>
+      <div class="search-command">
+        <div class="search-command-input"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg><input id="quickSearchInput" placeholder="Busque um cliente..." autocomplete="off" /><kbd>ESC</kbd></div>
+        <div id="quickSearchResults" class="quick-results"></div>
+      </div>
+    </div>
+
+    <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
